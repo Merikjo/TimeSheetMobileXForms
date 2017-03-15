@@ -13,8 +13,10 @@ namespace TimeSheetMobileXForms
         {
             InitializeComponent();
 
-            MainPage = new TimeSheetMobileXForms.MainPage();
+            MainPage = new NavigationPage(new EmployeePage());
         }
+
+     
 
         protected override void OnStart()
         {
