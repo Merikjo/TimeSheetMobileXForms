@@ -14,22 +14,36 @@ using Xamarin.Forms.Xaml;
 
 namespace TimeSheetMobileXForms
 {
-
-    [XamlCompilation(XamlCompilationOptions.Compile)]
+    //[XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class WorkAssignmentPage : ContentPage
     {
         public WorkAssignmentPage()
         {
             InitializeComponent();
+
             assignmentList.ItemsSource = new string[] { "" };
+            Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        latitudeLabel.Text = GpsLocationModel.Latitude.ToString("0.000");
+                        longitudeLabel.Text = GpsLocationModel.Longitude.ToString("0.000");
+                    });
+                    await Task.Delay(5000);
+                }
+            });
         }
+    
+        //video 3./4
         public async void LoadWorkAssignments(object sender, EventArgs e)
 
         {
             try
             {
                 HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri("http://mobilebackendmvc-api.azurewebsites.net/");
+                client.BaseAddress = new Uri("http://mobilebackendmvc-api2.azurewebsites.net/");
                 string json = await client.GetStringAsync("/api/workassignment");
                 string[] assignments = JsonConvert.DeserializeObject<string[]>(json);
 
@@ -41,10 +55,18 @@ namespace TimeSheetMobileXForms
                 assignmentList.ItemsSource = new string[] { errorMessage };
             }
         }
-        public async void StartWork(object sender, EventArgs e)
+        public async void StartWork(object sender, EventArgs e) //StopWork = rutiini (Clicked Button)
         {
             string assignmentName = assignmentList.SelectedItem?.ToString();
-            if (assignmentName != "")
+            if (string.IsNullOrEmpty(assignmentName))
+            {
+
+                await DisplayAlert("Start Work", "You must select work assignment first.", "OK");
+
+            }
+
+            else
+
             {
                 try
                 {
@@ -55,7 +77,7 @@ namespace TimeSheetMobileXForms
                     };
 
                     HttpClient client = new HttpClient();
-                    client.BaseAddress = new Uri("http://mobilebackendmvc-api.azurewebsites.net/");
+                    client.BaseAddress = new Uri("http://mobilebackendmvc-api2.azurewebsites.net/");
 
                     string input = JsonConvert.SerializeObject(data);
                     StringContent content = new StringContent(input, Encoding.UTF8, "application/json");
@@ -84,7 +106,7 @@ namespace TimeSheetMobileXForms
         }
 
 
-        public async void StopWork(object sender, EventArgs e)
+        public async void StopWork(object sender, EventArgs e) //StopWork = rutiini 
         {
             string assignmentName = assignmentList.SelectedItem?.ToString();
             if (string.IsNullOrEmpty(assignmentName))
@@ -103,7 +125,7 @@ namespace TimeSheetMobileXForms
                     };
 
                     HttpClient client = new HttpClient();
-                    client.BaseAddress = new Uri("http://mobilebackendmvc-api.azurewebsites.net/");
+                    client.BaseAddress = new Uri("http://mobilebackendmvc-api2.azurewebsites.net/");
                     string input = JsonConvert.SerializeObject(data);
                     StringContent content = new StringContent(input, Encoding.UTF8, "application/json");
 

@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using System.Net.Http;
+using System.IO;
 
 namespace TimeSheetMobileXForms
 {
@@ -22,15 +23,41 @@ namespace TimeSheetMobileXForms
             InitializeComponent();
             //BindingContext = new EmployeePage();
             employeeList.ItemsSource = new string[] { "" };
+            employeeList.ItemSelected += EmployeeList_ItemSelected;
+        }
+        private async void EmployeeList_ItemSelected(object sender,
+
+            SelectedItemChangedEventArgs e)
+
+        {
+            string employee = employeeList.SelectedItem?.ToString();
+            if (!string.IsNullOrEmpty(employee))
+            {
+                try
+                {
+                    HttpClient client = new HttpClient();
+                    client.BaseAddress = new Uri("http://mobilebackendmvc-api2.azurewebsites.net/");
+                    string json = await client.GetStringAsync("/api/employee?employeeNames=" + employee);
+                    byte[] imageBytes = JsonConvert.DeserializeObject<byte[]>(json);
+
+                    employeeImage.Source = ImageSource.FromStream(
+                        () => new MemoryStream(imageBytes));
+                }
+                catch (Exception ex)
+                {
+                    string errorMessage = ex.GetType().Name + ": " + ex.Message;
+                    employeeList.ItemsSource = new string[] { errorMessage };
+                }
+            }
         }
 
-        public async void LoadEmployees(object sender, EventArgs e)
+        public async void LoadEmployees(object sender, EventArgs e) //EventArgs=tapahtuma-argumentit Sender=olio, joka lähtettää tapahtuman, muoto tulee XAML -kielestä
         {
             try
 
             {
                 HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri("http://mobilebackendmvc-api.azurewebsites.net/");
+                client.BaseAddress = new Uri("http://mobilebackendmvc-api2.azurewebsites.net/");
                 string json = await client.GetStringAsync("/api/employee");
                 string[] employees = JsonConvert.DeserializeObject<string[]>(json);
 
@@ -57,7 +84,7 @@ namespace TimeSheetMobileXForms
             }
             else
             {
-                Navigation.PushAsync(new WorkAssignmentPage());
+                await Navigation.PushAsync(new WorkAssignmentPage());
 
             }
         }

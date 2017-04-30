@@ -5,24 +5,26 @@
              Title="WorkAssignmentPage">
   <ScrollView>
         <StackLayout Padding="10">
-            <Label Text="ContentPage" FontSize="40"/>
-            <Label Text="ContentPage is the simplest type of page."/>
-            <Label Text="The content of the ContentPage is generally a layout of some sort that can be a parent to multiple children."/>
-            <Label Text="This contant page contains a StackLayout, which in turn contains a few Label views (including the large one on the top and an example of handling click commands and data binding to a Label below)."/>
+            <!--<Label Text="ContentPage" FontSize="40"/>-->
+           
 
             <Button Text="Load Work Assignments" Clicked="LoadWorkAssignments"></Button>
             <Label Text="{Binding CountDisplay}"/>
             <ListView x:Name="assignmentList">
 
             </ListView>
-
-
-
+            <!--//Video 4./3 (8:00)-->
             <StackLayout Orientation="Horizontal">
+                <Label Text="Latitude: "></Label>
+                <Label x:Name="latitudeLabel" Text="0.00"></Label>
+                <Label Text="Longitude:"></Label>
+                <Label x:Name="longitudeLabel" Text="0.00"></Label>
+            </StackLayout>
 
+            <!--//Video 3./5 (2:00)-->
+            <StackLayout Orientation="Horizontal">
                 <Button Text="Start Work" Clicked="StartWork"></Button>
                 <Button Text="Stop Work" Clicked="StopWork"></Button>
-
             </StackLayout>
 
         </StackLayout>

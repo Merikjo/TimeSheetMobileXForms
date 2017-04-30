@@ -7,12 +7,14 @@ using Xamarin.Forms;
 
 namespace TimeSheetMobileXForms
 {
-    public partial class App : Application
+    public partial class  App : Application
     {
         public App()
         {
-            InitializeComponent();
-
+            //InitializeComponent();
+            // The root page of your application
+            //Mahdollistetaan siirtyminen toiselle sivulle
+            //Video 3./4
             MainPage = new NavigationPage(new EmployeePage());
         }
 
